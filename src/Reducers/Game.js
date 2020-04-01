@@ -1,11 +1,13 @@
 const initialState ={
   shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
   shipRotation: 0,
+  missiles: [],
 }
 
+let MISSILE_COUNTER = 0
 const INCREMENT_AMOUNT = 30
 
-function newShipX(x, rotation) {
+function newX(x, rotation) {
   const isLeftOfYAxis = rotation > 180
   const isBelowXAxis = rotation > 90 && rotation <= 270
 
@@ -36,7 +38,7 @@ function newShipX(x, rotation) {
   return x + value
 }
 
-function newShipY(y, rotation) {
+function newY(y, rotation) {
   const isLeftOfYAxis = rotation > 180
   const isBelowXAxis = rotation > 90 && rotation <= 270
 
@@ -76,8 +78,8 @@ export default (state = initialState, action) => {
       return {
         ...state,
         shipCoordinates: [
-          newShipX(state.shipCoordinates[0], state.shipRotation),
-          newShipY(state.shipCoordinates[1], state.shipRotation),
+          newX(state.shipCoordinates[0], state.shipRotation),
+          newY(state.shipCoordinates[1], state.shipRotation),
         ],
       }
 
@@ -92,6 +94,35 @@ export default (state = initialState, action) => {
         ...state,
         shipRotation: (state.shipRotation-30 === -30) ? 330 : state.shipRotation-30,
       }
+
+    case "SPACE_BAR":
+      return {
+        ...state,
+        missiles: [
+          ...state.missiles,
+          {
+            id: MISSILE_COUNTER++,
+            coordinates: [
+              ...state.shipCoordinates,
+            ],
+            rotation: state.shipRotation + 30
+          }
+        ]
+      }
+
+      case "UPDATE_MISSILE_POSITION":
+        return {
+          ...state,
+          missiles: state.missiles.map((missile) => {
+            return {
+              ...missile,
+              coordinates: [
+                newX(missile.coordinates[0], missile.rotation),
+                newY(missile.coordinates[1], missile.rotation),
+              ],
+            }
+          })
+        }
 
     default: return state
   }
