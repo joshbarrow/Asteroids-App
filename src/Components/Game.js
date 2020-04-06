@@ -3,9 +3,11 @@ import { connect } from 'react-redux'
 import './Game.scss'
 import Ship from './Ship'
 import Missile from './Missile'
+import Asteroid from './Asteroid'
 
 const mapStateToProps = state => ({
   missiles: state.game.missiles,
+  asteroids: state.game.asteroids,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -13,29 +15,43 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: "KEY_UP", payload: event })
   },
 
-  updateMissilePosition() {
-    dispatch({ type: "UPDATE_MISSILE_POSITION", payload: null })
-  }
+  missileEventLoop() {
+    dispatch({ type: "MISSILE_EVENT_LOOP", payload: null })
+  },
+
+  asteroidEventLoop() {
+    dispatch({ type: "ASTEROID_EVENT_LOOP", payload: null })
+  },
+
 })
 
 const Game = ({
   keyUp,
   missiles,
-  updateMissilePosition,
+  asteroids,
+  updateAsteroidPosition,
+  missileEventLoop,
+  asteroidEventLoop,
 }) => {
   useEffect(() => {
     window.addEventListener("keydown", event => {
       keyUp(event)
     })
+
     setInterval(() => {
-      updateMissilePosition("UPDATE_MISSILE_POSITION")
-    }, 10)
+      missileEventLoop()
+    }, 100)
+
+    setInterval(() => {
+      asteroidEventLoop()
+    }, 1000)
   }, [])
 
   return(
     <div id="game">
       <Ship />
       { missiles.map((missile, index) => <Missile missile={ missile } key={ index } />) }
+      { asteroids.map((asteroid, index) => <Asteroid asteroid={ asteroid } key={ index } />) }
     </div>
   )
 }
