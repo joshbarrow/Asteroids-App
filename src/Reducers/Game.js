@@ -68,6 +68,7 @@ const initialState ={
 }
 
 export default (state = initialState, action) => {
+  let collisions
   switch (action.type) {
 
     case "ARROW_UP":
@@ -107,12 +108,12 @@ export default (state = initialState, action) => {
       }
 
       case "MISSILE_EVENT_LOOP":
-        const { missileCollisions, asteroidCollisions } = detectCollisions(state.missiles, state.asteroids)
+        collisions = detectCollisions(state.missiles, state.asteroids)
         return {
           ...state,
           missiles: (
             state.missiles
-              .filter((missile) => !missileCollisions.includes(missile.id) )
+              .filter((missile) => !collisions.missile.includes(missile.id) )
               .map((missile) => {
                 return {
                   ...missile,
@@ -123,21 +124,27 @@ export default (state = initialState, action) => {
                 }
               })
           ),
-          asteroids: state.asteroids.filter((asteroid) => !asteroidCollisions.includes(asteroid.id))
+          asteroids: state.asteroids.filter((asteroid) => !collisions.asteroid.includes(asteroid.id))
         }
 
       case "ASTEROID_EVENT_LOOP":
+        collisions = detectCollisions(state.missiles, state.asteroids)
         return {
           ...state,
-          asteroids: state.asteroids.map((asteroid) => {
-            return {
-            ...asteroid,
-            coordinates: [
-              newX(asteroid.coordinates[0], asteroid.rotation),
-              newY(asteroid.coordinates[1], asteroid.rotation),
-            ],
-            }
-          })
+          asteroids: (
+            state.asteroids
+              .filter((asteroid) => !collisions.asteroid.includes(asteroid.id))
+              .map((asteroid) => {
+                return {
+                  ...asteroid,
+                  coordinates: [
+                    newX(asteroid.coordinates[0], asteroid.rotation),
+                    newY(asteroid.coordinates[1], asteroid.rotation),
+                  ],
+                }
+              })
+          ),
+          missiles: state.missiles.filter((missile) => !collisions.missile.includes(missile.id))
         }
 
     default: return state

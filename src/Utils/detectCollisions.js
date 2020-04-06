@@ -14,5 +14,5 @@ export default function detectCollisions(missiles, asteroids) {
       }
     } )
   } )
-  return { missileCollisions, asteroidCollisions }
+  return { missile: missileCollisions, asteroid: asteroidCollisions }
 }
