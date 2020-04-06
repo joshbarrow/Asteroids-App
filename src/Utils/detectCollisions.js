@@ -3,13 +3,18 @@ export default function detectCollisions(missiles, asteroids) {
   const asteroidCollisions = []
   const newAsteroids = []
   let ASTEROID_COUNTER = 100
+  const ASTEROID_SIZE_INDEX = {
+    large: 50,
+    medium: 25,
+    small: 10,
+  }
   missiles.forEach((missile) => {
     asteroids.forEach((asteroid) => {
       if (
         missile.coordinates[0] >= asteroid.coordinates[0] &&
-        missile.coordinates[0] <= asteroid.coordinates[0]+50 &&
+        missile.coordinates[0] <= asteroid.coordinates[0]+ASTEROID_SIZE_INDEX[asteroid.size] &&
         missile.coordinates[1] >= asteroid.coordinates[1] &&
-        missile.coordinates[1] <= asteroid.coordinates[1]+50
+        missile.coordinates[1] <= asteroid.coordinates[1]+ASTEROID_SIZE_INDEX[asteroid.size]
       ) {
         missileCollisions.push(missile.id)
         asteroidCollisions.push(asteroid.id)
