@@ -2,6 +2,7 @@ import { newX, newY } from '../Utils/coordinates'
 import detectCollisions from '../Utils/detectCollisions'
 
 let MISSILE_COUNTER = 0
+let ASTEROID_COUNTER = 0
 
 const initialState ={
   shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
@@ -9,61 +10,53 @@ const initialState ={
   missiles: [],
   asteroids: [
     {
-      id: 1,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [32,55],
       rotation: 12,
     },
 
     {
-      id: 2,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [70, 120],
       rotation: 50,
     },
 
     {
-      id: 3,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [70, 120],
       rotation: 50,
     },
 
     {
-      id: 4,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [50, 21],
       rotation: 50,
     },
 
     {
-      id: 5,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [343, 44],
       rotation: 11,
     },
 
     {
-      id: 6,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [320, 120],
       rotation: 12,
     },
 
     {
-      id: 7,
+      id: ASTEROID_COUNTER++,
       size: "large",
       coordinates: [222, 111],
       rotation: 122,
     },
-
-    {
-      id: 8,
-      size: "medium",
-      coordinates: [140, 88],
-      rotation: 122,
-    },
-
   ]
 }
 
@@ -124,7 +117,10 @@ export default (state = initialState, action) => {
                 }
               })
           ),
-          asteroids: state.asteroids.filter((asteroid) => !collisions.asteroid.includes(asteroid.id))
+          asteroids: [
+            ...state.asteroids.filter((asteroid) => !collisions.asteroid.includes(asteroid.id)),
+            ...collisions.newAsteroids,
+          ]
         }
 
       case "ASTEROID_EVENT_LOOP":
@@ -132,17 +128,21 @@ export default (state = initialState, action) => {
         return {
           ...state,
           asteroids: (
-            state.asteroids
-              .filter((asteroid) => !collisions.asteroid.includes(asteroid.id))
-              .map((asteroid) => {
-                return {
-                  ...asteroid,
-                  coordinates: [
-                    newX(asteroid.coordinates[0], asteroid.rotation),
-                    newY(asteroid.coordinates[1], asteroid.rotation),
-                  ],
-                }
-              })
+            [
+              ...state.asteroids
+                .filter((asteroid) => !collisions.asteroid.includes(asteroid.id))
+                .map((asteroid) => {
+                  return {
+                    ...asteroid,
+                    coordinates: [
+                      newX(asteroid.coordinates[0], asteroid.rotation),
+                      newY(asteroid.coordinates[1], asteroid.rotation),
+                    ],
+                  }
+                }),
+              ...collisions.newAsteroids,
+            ]
+
           ),
           missiles: state.missiles.filter((missile) => !collisions.missile.includes(missile.id))
         }
