@@ -1,8 +1,9 @@
+import createAsteroidsFromCollision from './createAsteroidsFromCollision'
+
 export default function detectCollisions(missiles, asteroids) {
   const missileCollisions = []
   const asteroidCollisions = []
   const newAsteroids = []
-  let ASTEROID_COUNTER = 100
   const ASTEROID_SIZE_INDEX = {
     large: 50,
     medium: 25,
@@ -18,35 +19,10 @@ export default function detectCollisions(missiles, asteroids) {
       ) {
         missileCollisions.push(missile.id)
         asteroidCollisions.push(asteroid.id)
-        const a = [
-          {
-            id: ASTEROID_COUNTER++,
-            rotation: 0,
-            coordinates: [0,0],
-            size: "medium",
-          },
-
-          {
-            id: ASTEROID_COUNTER++,
-            rotation: 45,
-            coordinates: [120,55],
-            size: "medium",
-          },
-
-          {
-            id: ASTEROID_COUNTER++,
-            rotation: 12,
-            coordinates: [90,32],
-            size: "medium",
-          },
-
-          {
-            id: ASTEROID_COUNTER++,
-            rotation: 124,
-            coordinates: [132,345],
-            size: "medium",
-          },
-        ].forEach((newAsteroid) => newAsteroids.push(newAsteroid))
+        createAsteroidsFromCollision(asteroid)
+          .forEach((newAsteroid) => {
+            newAsteroids.push(newAsteroid)
+          })
       }
     } )
   } )
