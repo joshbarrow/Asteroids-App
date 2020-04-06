@@ -1,4 +1,5 @@
 import { newX, newY } from '../Utils/coordinates'
+import detectCollisions from '../Utils/detectCollisions'
 
 let MISSILE_COUNTER = 0
 
@@ -106,23 +107,7 @@ export default (state = initialState, action) => {
       }
 
       case "MISSILE_EVENT_LOOP":
-        const missileCollisions = []
-        const asteroidCollisions = []
-        const newAsteroids = []
-        state.missiles.forEach((missile) => {
-          state.asteroids.forEach((asteroid) => {
-            if (
-              missile.coordinates[0] >= asteroid.coordinates[0] &&
-              missile.coordinates[0] <= asteroid.coordinates[0]+50 &&
-              missile.coordinates[1] >= asteroid.coordinates[1] &&
-              missile.coordinates[1] <= asteroid.coordinates[1]+50
-            ) {
-               missileCollisions.push(missile.id)
-               asteroidCollisions.push(asteroid.id)
-            }
-          } )
-        } )
-        console.log(missileCollisions);
+        const { missileCollisions, asteroidCollisions } = detectCollisions(state.missiles, state.asteroids)
         return {
           ...state,
           missiles: (
