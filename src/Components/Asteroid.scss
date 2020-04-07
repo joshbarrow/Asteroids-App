@@ -1,14 +1,4 @@
 .asteroid {
   background-color: white;
   position: absolute;
-
-  &.large {
-    height: 50px;
-    width: 50px;
-  }
-
-  &.medium {
-    height: 25px;
-    width: 25px;
-  }
 }

@@ -1,6 +1,16 @@
 let ASTEROID_COUNTER = 100
 
+function getSize (asteroid) {
+  if (asteroid.size === "medium") {
+    return "small"
+  }
+  return "medium"
+}
+
 export default function (asteroid) {
+  if (asteroid.size === "small") {
+    return []
+  }
   return(
     [
       {
@@ -10,7 +20,7 @@ export default function (asteroid) {
           asteroid.coordinates[0]+10,
           asteroid.coordinates[1]+10,
         ],
-        size: "medium",
+        size: getSize(asteroid)
       },
 
       {
@@ -20,7 +30,7 @@ export default function (asteroid) {
           asteroid.coordinates[0]+20,
           asteroid.coordinates[1]+20,
         ],
-        size: "medium",
+        size: getSize(asteroid),
       },
 
       {
@@ -30,7 +40,7 @@ export default function (asteroid) {
           asteroid.coordinates[0]+5,
           asteroid.coordinates[1]+5,
         ],
-        size: "medium",
+        size: getSize(asteroid),
       },
 
       {
@@ -40,7 +50,7 @@ export default function (asteroid) {
           asteroid.coordinates[0]+15,
           asteroid.coordinates[1]+15,
         ],
-        size: "medium",
+        size: getSize(asteroid)
       },
     ]
   )

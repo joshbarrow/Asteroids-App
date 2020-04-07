@@ -1,14 +1,11 @@
 import createAsteroidsFromCollision from './createAsteroidsFromCollision'
+import { ASTEROID_SIZE_INDEX } from '../Config'
 
 export default function detectCollisions(missiles, asteroids) {
   const missileCollisions = []
   const asteroidCollisions = []
   const newAsteroids = []
-  const ASTEROID_SIZE_INDEX = {
-    large: 50,
-    medium: 25,
-    small: 10,
-  }
+  
   missiles.forEach((missile) => {
     asteroids.forEach((asteroid) => {
       if (
