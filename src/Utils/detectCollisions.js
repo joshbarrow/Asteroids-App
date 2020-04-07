@@ -1,27 +1,56 @@
 import createAsteroidsFromCollision from './createAsteroidsFromCollision'
 import { ASTEROID_SIZE_INDEX } from '../Config'
 
-export default function detectCollisions(missiles, asteroids) {
-  const missileCollisions = []
-  const asteroidCollisions = []
-  const newAsteroids = []
-  
-  missiles.forEach((missile) => {
-    asteroids.forEach((asteroid) => {
+function detectCollisions(collectionA, collectionB, onDetect) {
+  const itemACollisions = []
+  const itemBCollisions = []
+
+  collectionA.forEach((itemA) => {
+    collectionB.forEach((itemB) => {
       if (
-        missile.coordinates[0] >= asteroid.coordinates[0] &&
-        missile.coordinates[0] <= asteroid.coordinates[0]+ASTEROID_SIZE_INDEX[asteroid.size] &&
-        missile.coordinates[1] >= asteroid.coordinates[1] &&
-        missile.coordinates[1] <= asteroid.coordinates[1]+ASTEROID_SIZE_INDEX[asteroid.size]
+        itemA.coordinates[0] >= itemB.coordinates[0] &&
+        itemA.coordinates[0] <= itemB.coordinates[0]+ASTEROID_SIZE_INDEX[itemB.size] &&
+        itemA.coordinates[1] >= itemB.coordinates[1] &&
+        itemA.coordinates[1] <= itemB.coordinates[1]+ASTEROID_SIZE_INDEX[itemB.size]
       ) {
-        missileCollisions.push(missile.id)
-        asteroidCollisions.push(asteroid.id)
-        createAsteroidsFromCollision(asteroid)
-          .forEach((newAsteroid) => {
-            newAsteroids.push(newAsteroid)
-          })
+        if (typeof onDetect === "function") {
+          onDetect(itemA, itemB)
+        }
+        itemACollisions.push(itemA.id)
+        itemBCollisions.push(itemB.id)
+
       }
     } )
   } )
-  return { missile: missileCollisions, asteroid: asteroidCollisions, newAsteroids }
+  return { collectionA: itemACollisions, collectionB: itemBCollisions }
+}
+
+export function detectMissileCollisions(missiles, asteroids) {
+  const newAsteroids = []
+  const collisions = detectCollisions(missiles, asteroids, (missile, asteroid) => {
+    createAsteroidsFromCollision(asteroid)
+      .forEach((newAsteroid) => {
+        newAsteroids.push(newAsteroid)
+      })
+  })
+  return {
+    asteroid: collisions.collectionB,
+    missile: collisions.collectionA,
+    newAsteroids,
+  }
+}
+
+export function detectShipCollisions(shipCoordinates, asteroids) {
+  const newAsteroids = []
+  const collisions = detectCollisions([{ id: "ship", coordinates: shipCoordinates }], asteroids, (ship, asteroid) => {
+    createAsteroidsFromCollision(asteroid)
+      .forEach((newAsteroid) => {
+        newAsteroids.push(newAsteroid)
+      })
+  })
+  return {
+    shipDidCollide: collisions.collectionA.length,
+    asteroid: collisions.collectionB,
+    newAsteroids,
+  }
 }

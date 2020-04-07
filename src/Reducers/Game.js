@@ -1,5 +1,5 @@
 import { newX, newY } from '../Utils/coordinates'
-import detectCollisions from '../Utils/detectCollisions'
+import { detectShipCollisions, detectMissileCollisions } from '../Utils/detectCollisions'
 
 let MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
@@ -101,7 +101,7 @@ export default (state = initialState, action) => {
       }
 
       case "MISSILE_EVENT_LOOP":
-        collisions = detectCollisions(state.missiles, state.asteroids)
+        collisions = detectMissileCollisions(state.missiles, state.asteroids)
         return {
           ...state,
           missiles: (
@@ -124,7 +124,7 @@ export default (state = initialState, action) => {
         }
 
       case "ASTEROID_EVENT_LOOP":
-        collisions = detectCollisions(state.missiles, state.asteroids)
+        collisions = detectMissileCollisions(state.missiles, state.asteroids)
         return {
           ...state,
           asteroids: (
