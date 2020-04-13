@@ -1,6 +1,8 @@
 import createAsteroidsFromCollision from './createAsteroidsFromCollision'
 import { ASTEROID_SIZE_INDEX } from '../Config'
 
+let LIVES_COUNTER = 5
+
 function detectCollisions(collectionA, collectionB, onDetect) {
   const itemACollisions = []
   const itemBCollisions = []
@@ -49,8 +51,11 @@ export function detectShipCollisions(shipCoordinates, asteroids) {
       })
   })
   return {
-    shipDidCollide: collisions.collectionA.length,
+    shipDidCollide: !!collisions.collectionA.length,
     asteroid: collisions.collectionB,
     newAsteroids,
+    numberOfLives: [
+      collisions.collectionB.length ? LIVES_COUNTER-- : LIVES_COUNTER
+    ],
   }
 }

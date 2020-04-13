@@ -4,6 +4,8 @@ import './Game.scss'
 import Ship from './Ship'
 import Missile from './Missile'
 import Asteroid from './Asteroid'
+import LivesCounter from './LivesCounter'
+
 
 const mapStateToProps = state => ({
   missiles: state.game.missiles,
@@ -32,6 +34,7 @@ const Game = ({
   updateAsteroidPosition,
   missileEventLoop,
   asteroidEventLoop,
+  numberOfLives,
 }) => {
   useEffect(() => {
     window.addEventListener("keydown", event => {
@@ -49,6 +52,7 @@ const Game = ({
 
   return(
     <div id="game">
+      <LivesCounter lives={ numberOfLives } />
       <Ship />
       { missiles.map((missile, index) => <Missile missile={ missile } key={ index } />) }
       { asteroids.map((asteroid, index) => <Asteroid asteroid={ asteroid } key={ index } />) }

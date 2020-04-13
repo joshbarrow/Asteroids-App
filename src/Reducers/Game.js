@@ -61,16 +61,28 @@ const initialState ={
 }
 
 export default (state = initialState, action) => {
-  let collisions
+  let missileCollisions, shipCollisions
   switch (action.type) {
 
     case "ARROW_UP":
-      return {
-        ...state,
-        shipCoordinates: [
-          newX(state.shipCoordinates[0], state.shipRotation),
-          newY(state.shipCoordinates[1], state.shipRotation),
-        ],
+      shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids)
+      if (shipCollisions.shipDidCollide){
+        return {
+          ...state,
+          shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
+          asteroids: [
+            ...state.asteroids.filter(asteroid => !shipCollisions.asteroid.includes(asteroid.id)),
+            ...shipCollisions.newAsteroids,
+          ]
+        }
+      } else {
+        return {
+          ...state,
+          shipCoordinates: [
+            newX(state.shipCoordinates[0], state.shipRotation),
+            newY(state.shipCoordinates[1], state.shipRotation),
+          ],
+        }
       }
 
     case "ARROW_RIGHT":
@@ -101,12 +113,12 @@ export default (state = initialState, action) => {
       }
 
       case "MISSILE_EVENT_LOOP":
-        collisions = detectMissileCollisions(state.missiles, state.asteroids)
+        missileCollisions = detectMissileCollisions(state.missiles, state.asteroids)
         return {
           ...state,
           missiles: (
             state.missiles
-              .filter((missile) => !collisions.missile.includes(missile.id) )
+              .filter((missile) => !missileCollisions.missile.includes(missile.id) )
               .map((missile) => {
                 return {
                   ...missile,
@@ -118,19 +130,24 @@ export default (state = initialState, action) => {
               })
           ),
           asteroids: [
-            ...state.asteroids.filter((asteroid) => !collisions.asteroid.includes(asteroid.id)),
-            ...collisions.newAsteroids,
+            ...state.asteroids.filter((asteroid) => !missileCollisions.asteroid.includes(asteroid.id)),
+            ...missileCollisions.newAsteroids,
           ]
         }
 
       case "ASTEROID_EVENT_LOOP":
-        collisions = detectMissileCollisions(state.missiles, state.asteroids)
+        missileCollisions = detectMissileCollisions(state.missiles, state.asteroids)
+        shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids, state.numberOfLives)
         return {
           ...state,
+          shipCoordinates: shipCollisions.shipDidCollide
+            ? [window.innerWidth/2, window.innerHeight/2]
+            : state.shipCoordinates,
           asteroids: (
             [
               ...state.asteroids
-                .filter((asteroid) => !collisions.asteroid.includes(asteroid.id))
+                .filter((asteroid) => !missileCollisions.asteroid.includes(asteroid.id))
+                .filter((asteroid) => !shipCollisions.asteroid.includes(asteroid.id))
                 .map((asteroid) => {
                   return {
                     ...asteroid,
@@ -140,11 +157,13 @@ export default (state = initialState, action) => {
                     ],
                   }
                 }),
-              ...collisions.newAsteroids,
+              ...missileCollisions.newAsteroids,
+              ...shipCollisions.newAsteroids,
             ]
-
           ),
-          missiles: state.missiles.filter((missile) => !collisions.missile.includes(missile.id))
+          missiles: state.missiles.filter((missile) => !missileCollisions.missile.includes(missile.id)),
+          numberOfLives: shipCollisions.shipDidCollide ? shipCollisions.numberOfLives : shipCollisions.numberOfLives
+
         }
 
     default: return state
