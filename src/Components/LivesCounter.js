@@ -8,11 +8,10 @@ const mapStateToProps = state => ({
 })
 
 export const LivesCounter = ({
-  lives,
   numberOfLives,
 }) => {
   return(
-    <div id="lives">{ numberOfLives }</div>
+    <div id="lives">Lives: { numberOfLives }</div>
   )
 }
 
