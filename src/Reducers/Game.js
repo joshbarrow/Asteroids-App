@@ -7,6 +7,7 @@ let ASTEROID_COUNTER = 0
 const initialState ={
   shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
   shipRotation: 0,
+  numberOfLives: 5,
   missiles: [],
   asteroids: [
     {
@@ -57,7 +58,7 @@ const initialState ={
       coordinates: [222, 111],
       rotation: 122,
     },
-  ]
+  ],
 }
 
 export default (state = initialState, action) => {
@@ -73,7 +74,8 @@ export default (state = initialState, action) => {
           asteroids: [
             ...state.asteroids.filter(asteroid => !shipCollisions.asteroid.includes(asteroid.id)),
             ...shipCollisions.newAsteroids,
-          ]
+          ],
+          numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0)
         }
       } else {
         return {
@@ -137,7 +139,9 @@ export default (state = initialState, action) => {
 
       case "ASTEROID_EVENT_LOOP":
         missileCollisions = detectMissileCollisions(state.missiles, state.asteroids)
-        shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids, state.numberOfLives)
+        shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids)
+        console.log( shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives)
+
         return {
           ...state,
           shipCoordinates: shipCollisions.shipDidCollide
@@ -162,8 +166,7 @@ export default (state = initialState, action) => {
             ]
           ),
           missiles: state.missiles.filter((missile) => !missileCollisions.missile.includes(missile.id)),
-          numberOfLives: shipCollisions.shipDidCollide ? shipCollisions.numberOfLives : shipCollisions.numberOfLives
-
+          numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0)
         }
 
     default: return state

@@ -1,6 +1,5 @@
 import React from 'react'
 import "./LivesCounter.scss"
-import { LIVES_COUNTER } from '../Utils/detectCollisions'
 import { connect } from 'react-redux'
 
 const mapStateToProps = state => ({
