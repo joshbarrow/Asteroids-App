@@ -5,11 +5,14 @@ import Ship from './Ship'
 import Missile from './Missile'
 import Asteroid from './Asteroid'
 import LivesCounter from './LivesCounter'
+import GameOver from './GameOver'
 
 
 const mapStateToProps = state => ({
   missiles: state.game.missiles,
   asteroids: state.game.asteroids,
+  numberOfLives: state.game.numberOfLives,
+
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -31,7 +34,6 @@ const Game = ({
   keyUp,
   missiles,
   asteroids,
-  updateAsteroidPosition,
   missileEventLoop,
   asteroidEventLoop,
   numberOfLives,
@@ -49,6 +51,10 @@ const Game = ({
       asteroidEventLoop()
     }, 1000)
   }, [])
+
+  if (numberOfLives === 0) {
+    return <GameOver />
+  }
 
   return(
     <div id="game">

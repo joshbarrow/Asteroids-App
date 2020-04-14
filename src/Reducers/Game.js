@@ -4,62 +4,66 @@ import { detectShipCollisions, detectMissileCollisions } from '../Utils/detectCo
 let MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
 
-const initialState ={
-  shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
-  shipRotation: 0,
-  numberOfLives: 5,
-  missiles: [],
-  asteroids: [
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [32,55],
-      rotation: 12,
-    },
+function newGame () {
+  return {
+    shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
+    shipRotation: 0,
+    numberOfLives: 1,
+    missiles: [],
+    asteroids: [
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [32,55],
+        rotation: 12,
+      },
 
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [70, 120],
-      rotation: 50,
-    },
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [70, 120],
+        rotation: 50,
+      },
 
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [70, 120],
-      rotation: 50,
-    },
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [70, 120],
+        rotation: 50,
+      },
 
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [50, 21],
-      rotation: 50,
-    },
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [50, 21],
+        rotation: 50,
+      },
 
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [343, 44],
-      rotation: 11,
-    },
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [343, 44],
+        rotation: 11,
+      },
 
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [320, 120],
-      rotation: 12,
-    },
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [320, 120],
+        rotation: 12,
+      },
 
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [222, 111],
-      rotation: 122,
-    },
-  ],
+      {
+        id: ASTEROID_COUNTER++,
+        size: "large",
+        coordinates: [222, 111],
+        rotation: 122,
+      },
+    ],
+  }
 }
+
+const initialState = newGame()
 
 export default (state = initialState, action) => {
   let missileCollisions, shipCollisions
@@ -168,6 +172,9 @@ export default (state = initialState, action) => {
           missiles: state.missiles.filter((missile) => !missileCollisions.missile.includes(missile.id)),
           numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0)
         }
+
+    case "NEW_GAME":
+      return newGame()
 
     default: return state
   }
