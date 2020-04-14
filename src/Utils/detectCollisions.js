@@ -26,9 +26,21 @@ function detectCollisions(collectionA, collectionB, onDetect) {
   return { collectionA: itemACollisions, collectionB: itemBCollisions }
 }
 
+function calculatePointsFromCollision(size) {
+  if (size === "large") {
+    return 30
+  } else if (size === "medium") {
+    return 20
+  } else if (size === "small") {
+    return 10
+  }
+}
+
 export function detectMissileCollisions(missiles, asteroids) {
   const newAsteroids = []
+  let points = 0
   const collisions = detectCollisions(missiles, asteroids, (missile, asteroid) => {
+    points = points+calculatePointsFromCollision(asteroid.size)
     createAsteroidsFromCollision(asteroid)
       .forEach((newAsteroid) => {
         newAsteroids.push(newAsteroid)
@@ -38,6 +50,7 @@ export function detectMissileCollisions(missiles, asteroids) {
     asteroid: collisions.collectionB,
     missile: collisions.collectionA,
     newAsteroids,
+    points,
   }
 }
 

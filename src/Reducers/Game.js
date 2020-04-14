@@ -8,7 +8,8 @@ function newGame () {
   return {
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
-    numberOfLives: 1,
+    numberOfLives: 2,
+    score: 0,
     missiles: [],
     asteroids: [
       {
@@ -138,7 +139,9 @@ export default (state = initialState, action) => {
           asteroids: [
             ...state.asteroids.filter((asteroid) => !missileCollisions.asteroid.includes(asteroid.id)),
             ...missileCollisions.newAsteroids,
-          ]
+          ],
+          score: state.score+missileCollisions.points
+
         }
 
       case "ASTEROID_EVENT_LOOP":
@@ -170,7 +173,9 @@ export default (state = initialState, action) => {
             ]
           ),
           missiles: state.missiles.filter((missile) => !missileCollisions.missile.includes(missile.id)),
-          numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0)
+          numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0),
+          score: missileCollisions.missileDidCollide ? state.score+10 : state.score,
+
         }
 
     case "NEW_GAME":

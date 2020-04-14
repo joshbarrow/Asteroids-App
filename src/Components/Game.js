@@ -6,13 +6,14 @@ import Missile from './Missile'
 import Asteroid from './Asteroid'
 import LivesCounter from './LivesCounter'
 import GameOver from './GameOver'
+import Score from './ScoreCounter'
 
 
 const mapStateToProps = state => ({
-  missiles: state.game.missiles,
   asteroids: state.game.asteroids,
+  missiles: state.game.missiles,
   numberOfLives: state.game.numberOfLives,
-
+  score: state.game.score,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -31,12 +32,13 @@ const mapDispatchToProps = dispatch => ({
 })
 
 const Game = ({
-  keyUp,
-  missiles,
-  asteroids,
-  missileEventLoop,
   asteroidEventLoop,
+  asteroids,
+  keyUp,
+  missileEventLoop,
+  missiles,
   numberOfLives,
+  score
 }) => {
   useEffect(() => {
     window.addEventListener("keydown", event => {
@@ -58,6 +60,7 @@ const Game = ({
 
   return(
     <div id="game">
+      <Score score={ score }/>
       <LivesCounter lives={ numberOfLives } />
       <Ship />
       { missiles.map((missile, index) => <Missile missile={ missile } key={ index } />) }
