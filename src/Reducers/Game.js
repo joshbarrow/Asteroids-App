@@ -6,16 +6,19 @@ let MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
 const SHIP_SIZE = 30
 const MISSILE_SIZE = 5
+const UFO_MOVEMENT = 20
 
 function newGame () {
   return {
-    ufos: [{
-      id: 1,
-      coordinates: [0,0],
-      rotation: 180,
-      active: false,
-      startTime: 20000,
-    }],
+    ufos: [
+      {
+        id: 1,
+        coordinates: [0,0],
+        rotation: 180,
+        active: false,
+        startTime: 5000,
+      },
+    ],
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
     numberOfLives: 2,
@@ -198,6 +201,40 @@ export default (state = initialState, action) => {
           return {
             ...ufo,
             active: state.time + 50 >= ufo.startTime
+          }
+        })
+      }
+
+    case "UFO_EVENT_LOOP":
+      function randomNumberIsOne(max = 2) {
+        return Math.floor(Math.random() * max) === 1
+      }
+      const verticalDirection = randomNumberIsOne() ?
+        "up" :
+        "down"
+
+      const horizontalDirection = randomNumberIsOne(6) ?
+        "left" :
+        "right"
+
+      const horizontalIncrementAmount = horizontalDirection === "right" ?
+        UFO_MOVEMENT :
+        UFO_MOVEMENT * -1
+
+      const verticalIncrementAmount = verticalDirection === "down" ?
+        UFO_MOVEMENT :
+        UFO_MOVEMENT * -1
+
+      return {
+        ...state,
+        ufos: state.ufos.map((ufo) => {
+          if (!ufo.active) return ufo
+          return {
+            ...ufo,
+            coordinates: [
+              Math.max(ufo.coordinates[0] + horizontalIncrementAmount, 0),
+              Math.max(ufo.coordinates[1] + verticalIncrementAmount, 0)
+            ]
           }
         })
       }

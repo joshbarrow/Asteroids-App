@@ -1,9 +1,17 @@
 import React from 'react'
 import './UFO.scss'
 
-const UFO = () => {
+const UFO = ({
+  ufo
+}) => {
   return(
-    <div className="ufo">ufo</div>
+    <div
+      style= {{
+        left: ufo.coordinates[0],
+        top: ufo.coordinates[1],
+        
+      }}
+      className="ufo">ufo</div>
   )
 }
 export default UFO

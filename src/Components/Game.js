@@ -57,6 +57,13 @@ const Game = ({
       })
     }
 
+    if (time % 500 === 0) {
+      dispatch ({
+        type: "UFO_EVENT_LOOP",
+        payload: null,
+      })
+    }
+
     if (time % 1000 === 0) {
       dispatch({
         type: "ASTEROID_EVENT_LOOP",
