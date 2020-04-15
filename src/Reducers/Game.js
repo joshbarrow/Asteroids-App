@@ -12,6 +12,7 @@ function newGame () {
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
     numberOfLives: 2,
+    time: 0,
     score: 0,
     missiles: [],
     asteroids: [
@@ -150,7 +151,6 @@ export default (state = initialState, action) => {
       case "ASTEROID_EVENT_LOOP":
         missileCollisions = detectMissileCollisions(state.missiles, state.asteroids)
         shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids)
-        console.log( shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives)
         return {
           ...state,
           shipCoordinates: shipCollisions.shipDidCollide
@@ -182,6 +182,12 @@ export default (state = initialState, action) => {
 
     case "NEW_GAME":
       return newGame()
+
+    case "UPDATE_CURRENT_TIME":
+      return {
+        ...state,
+        time: state.time + 50,
+      }
 
     default: return state
   }

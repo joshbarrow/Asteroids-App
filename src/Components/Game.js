@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import './Game.scss'
 import Ship from './Ship'
 import Missile from './Missile'
@@ -8,28 +8,19 @@ import LivesCounter from './LivesCounter'
 import GameOver from './GameOver'
 import Score from './ScoreCounter'
 
-
 const mapStateToProps = state => ({
   asteroids: state.game.asteroids,
   missiles: state.game.missiles,
   numberOfLives: state.game.numberOfLives,
   score: state.game.score,
+  time: state.game.time,
 })
 
 const mapDispatchToProps = dispatch => ({
-  keyUp(event) {
-    dispatch({ type: "KEY_UP", payload: event })
-  },
-
-  missileEventLoop() {
-    dispatch({ type: "MISSILE_EVENT_LOOP", payload: null })
-  },
-
-  asteroidEventLoop() {
-    dispatch({ type: "ASTEROID_EVENT_LOOP", payload: null })
-  },
 
 })
+
+let gameLoopInterval
 
 const Game = ({
   asteroidEventLoop,
@@ -38,21 +29,37 @@ const Game = ({
   missileEventLoop,
   missiles,
   numberOfLives,
-  score
+  score,
+  time
 }) => {
+  const dispatch = useDispatch()
   useEffect(() => {
-    window.addEventListener("keydown", event => {
-      keyUp(event)
-    })
 
-    setInterval(() => {
-      missileEventLoop()
-    }, 100)
+    if (!gameLoopInterval) {
+      window.addEventListener("keydown", event => {
+        dispatch({ type: "KEY_UP", payload: event })
+      })
+      gameLoopInterval = setInterval(() => {
+        dispatch({
+          type: "UPDATE_CURRENT_TIME",
+        })
+      }, 50)
+    }
 
-    setInterval(() => {
-      asteroidEventLoop()
-    }, 1000)
-  }, [])
+    if (time % 100 === 0) {
+      dispatch({
+        type: "MISSILE_EVENT_LOOP",
+        payload: null,
+      })
+    }
+
+    if (time % 1000 === 0) {
+      dispatch({
+        type: "ASTEROID_EVENT_LOOP",
+        payload: null,
+      })
+    }
+  }, [dispatch,time])
 
   if (numberOfLives === 0) {
     return <GameOver />
