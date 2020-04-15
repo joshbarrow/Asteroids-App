@@ -9,6 +9,13 @@ const MISSILE_SIZE = 5
 
 function newGame () {
   return {
+    ufos: [{
+      id: 1,
+      coordinates: [0,0],
+      rotation: 180,
+      active: false,
+      startTime: 20000,
+    }],
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
     numberOfLives: 2,
@@ -187,6 +194,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         time: state.time + 50,
+        ufos: state.ufos.map((ufo) => {
+          return {
+            ...ufo,
+            active: state.time + 50 >= ufo.startTime
+          }
+        })
       }
 
     default: return state

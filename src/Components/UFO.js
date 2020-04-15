@@ -1,8 +1,9 @@
 import React from 'react'
+import './UFO.scss'
 
 const UFO = () => {
   return(
-    <div>ufo</div>
+    <div className="ufo">ufo</div>
   )
 }
 export default UFO
