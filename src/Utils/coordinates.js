@@ -28,7 +28,13 @@ export function newX(x, rotation) {
     value = value * -1
   }
 
-  return x + value
+  const newValue = x + value
+  if (newValue <= 0) {
+    return window.innerWidth-1
+  } else if (newValue >= window.innerWidth) {
+    return 1
+  }
+  return newValue
 }
 
 export function newY(y, rotation) {
@@ -61,5 +67,11 @@ export function newY(y, rotation) {
     value = value * -1
   }
 
-  return y + value
+  const newY = y + value
+  if (newY <= 0) {
+    return window.innerHeight-1
+  } else if (newY >= window.innerHeight) {
+    return 1
+  }
+  return newY
 }

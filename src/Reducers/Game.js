@@ -1,8 +1,11 @@
 import { newX, newY } from '../Utils/coordinates'
 import { detectShipCollisions, detectMissileCollisions } from '../Utils/detectCollisions'
+import { ASTEROID_SIZE_INDEX } from '../Config'
 
 let MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
+const SHIP_SIZE = 30
+const MISSILE_SIZE = 5
 
 function newGame () {
   return {
@@ -15,49 +18,49 @@ function newGame () {
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [32,55],
-        rotation: 12,
+        coordinates: [0,0],
+        rotation: 95,
       },
 
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [70, 120],
+        coordinates: [0, window.innerHeight / 2],
         rotation: 50,
       },
 
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [70, 120],
+        coordinates: [0, window.innerHeight - ASTEROID_SIZE_INDEX.large],
         rotation: 50,
       },
 
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [50, 21],
+        coordinates: [window.innerWidth / 2, window.innerHeight - ASTEROID_SIZE_INDEX.large],
         rotation: 50,
       },
 
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [343, 44],
+        coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight - ASTEROID_SIZE_INDEX.large],
         rotation: 11,
       },
 
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [320, 120],
+        coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight / 2],
         rotation: 12,
       },
 
       {
         id: ASTEROID_COUNTER++,
         size: "large",
-        coordinates: [222, 111],
+        coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, 0],
         rotation: 122,
       },
     ],
@@ -86,8 +89,8 @@ export default (state = initialState, action) => {
         return {
           ...state,
           shipCoordinates: [
-            newX(state.shipCoordinates[0], state.shipRotation),
-            newY(state.shipCoordinates[1], state.shipRotation),
+            newX(state.shipCoordinates[0], state.shipRotation, SHIP_SIZE),
+            newY(state.shipCoordinates[1], state.shipRotation, SHIP_SIZE),
           ],
         }
       }
@@ -130,8 +133,8 @@ export default (state = initialState, action) => {
                 return {
                   ...missile,
                   coordinates: [
-                    newX(missile.coordinates[0], missile.rotation),
-                    newY(missile.coordinates[1], missile.rotation),
+                    newX(missile.coordinates[0], missile.rotation, MISSILE_SIZE),
+                    newY(missile.coordinates[1], missile.rotation, MISSILE_SIZE),
                   ],
                 }
               })
@@ -148,7 +151,6 @@ export default (state = initialState, action) => {
         missileCollisions = detectMissileCollisions(state.missiles, state.asteroids)
         shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids)
         console.log( shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives)
-
         return {
           ...state,
           shipCoordinates: shipCollisions.shipDidCollide
@@ -163,8 +165,8 @@ export default (state = initialState, action) => {
                   return {
                     ...asteroid,
                     coordinates: [
-                      newX(asteroid.coordinates[0], asteroid.rotation),
-                      newY(asteroid.coordinates[1], asteroid.rotation),
+                      newX(asteroid.coordinates[0], asteroid.rotation, ASTEROID_SIZE_INDEX[asteroid.size]),
+                      newY(asteroid.coordinates[1], asteroid.rotation, ASTEROID_SIZE_INDEX[asteroid.size]),
                     ],
                   }
                 }),
