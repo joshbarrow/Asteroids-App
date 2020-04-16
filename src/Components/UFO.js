@@ -9,7 +9,7 @@ const UFO = ({
       style= {{
         left: ufo.coordinates[0],
         top: ufo.coordinates[1],
-        
+
       }}
       className="ufo">ufo</div>
   )

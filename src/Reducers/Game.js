@@ -8,6 +8,7 @@ import {
 import { ASTEROID_SIZE_INDEX } from '../Config'
 
 let MISSILE_COUNTER = 0
+let UFO_MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
 const SHIP_SIZE = 30
 const MISSILE_SIZE = 5
@@ -30,6 +31,7 @@ function newGame () {
     time: 0,
     score: 0,
     missiles: [],
+    ufoMissiles: [],
     asteroids: [
       {
         id: ASTEROID_COUNTER++,
@@ -238,6 +240,8 @@ export default (state = initialState, action) => {
         "left" :
         "right"
 
+      const fireMissile = randomNumberIsOne(6)
+
       const horizontalIncrementAmount = horizontalDirection === "right" ?
         UFO_MOVEMENT :
         UFO_MOVEMENT * -1
@@ -245,6 +249,24 @@ export default (state = initialState, action) => {
       const verticalIncrementAmount = verticalDirection === "down" ?
         UFO_MOVEMENT :
         UFO_MOVEMENT * -1
+
+      const newUfoMissiles = state.ufoMissiles.map((ufoMissile) => {
+        return {
+          ...ufoMissile,
+          coordinates: [
+            ufoMissile.coordinates[0],
+            ufoMissile.coordinates[1] + 20
+          ]
+        }
+      })
+
+      if (fireMissile) {
+        newUfoMissiles.push({
+          id: UFO_MISSILE_COUNTER++,
+          coordinates: state.ufos[0].coordinates,
+          rotation: state.ufos[0].rotation
+        })
+      }
 
       return {
         ...state,
@@ -266,7 +288,7 @@ export default (state = initialState, action) => {
         shipCoordinates: shipCollisions.shipDidCollide
           ? [window.innerWidth/2, window.innerHeight/2]
           : state.shipCoordinates,
-
+        ufoMissiles: newUfoMissiles
       }
 
     default: return state
