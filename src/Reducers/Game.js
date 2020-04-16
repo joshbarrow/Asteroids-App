@@ -1,5 +1,10 @@
 import { newX, newY } from '../Utils/coordinates'
-import { detectShipCollisions, detectMissileCollisions } from '../Utils/detectCollisions'
+import {
+  detectShipCollisions,
+  detectMissileCollisions,
+  detectMissileCollisionsWithUFOs,
+  detectShipCollisionsWithUFO
+} from '../Utils/detectCollisions'
 import { ASTEROID_SIZE_INDEX } from '../Config'
 
 let MISSILE_COUNTER = 0
@@ -81,12 +86,16 @@ function newGame () {
 const initialState = newGame()
 
 export default (state = initialState, action) => {
-  let missileCollisions, shipCollisions
-  switch (action.type) {
+  let missileCollisions,
+    shipCollisions,
+    ufoCollisions,
+    shipUFOCollisions
 
+  switch (action.type) {
     case "ARROW_UP":
       shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids)
-      if (shipCollisions.shipDidCollide){
+      shipUFOCollisions = detectShipCollisionsWithUFO(state.shipCoordinates, state.ufos)
+      if (shipCollisions.shipDidCollide || shipUFOCollisions.shipDidCollide){
         return {
           ...state,
           shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
@@ -94,7 +103,13 @@ export default (state = initialState, action) => {
             ...state.asteroids.filter(asteroid => !shipCollisions.asteroid.includes(asteroid.id)),
             ...shipCollisions.newAsteroids,
           ],
-          numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0)
+          numberOfLives: Math.max(
+            shipCollisions.shipDidCollide || shipUFOCollisions.shipDidCollide ?
+              state.numberOfLives-1 :
+              state.numberOfLives, 0),
+          ufos: [
+            ...state.ufos.filter((ufo) => !shipUFOCollisions.ufo.includes((ufo.id)))
+          ]
         }
       } else {
         return {
@@ -134,12 +149,14 @@ export default (state = initialState, action) => {
       }
 
       case "MISSILE_EVENT_LOOP":
+        ufoCollisions = detectMissileCollisionsWithUFOs(state.missiles, state.ufos)
         missileCollisions = detectMissileCollisions(state.missiles, state.asteroids)
         return {
           ...state,
           missiles: (
             state.missiles
               .filter((missile) => !missileCollisions.missile.includes(missile.id) )
+              .filter((missile) => !ufoCollisions.missile.includes(missile.id) )
               .map((missile) => {
                 return {
                   ...missile,
@@ -154,8 +171,11 @@ export default (state = initialState, action) => {
             ...state.asteroids.filter((asteroid) => !missileCollisions.asteroid.includes(asteroid.id)),
             ...missileCollisions.newAsteroids,
           ],
-          score: state.score+missileCollisions.points
 
+          ufos: [
+            ...state.ufos.filter((ufo) => !ufoCollisions.ufo.includes(ufo.id))
+          ],
+          score: state.score + missileCollisions.points + ufoCollisions.points,
         }
 
       case "ASTEROID_EVENT_LOOP":
@@ -206,6 +226,7 @@ export default (state = initialState, action) => {
       }
 
     case "UFO_EVENT_LOOP":
+      shipCollisions = detectShipCollisionsWithUFO(state.shipCoordinates, state.ufos)
       function randomNumberIsOne(max = 2) {
         return Math.floor(Math.random() * max) === 1
       }
@@ -227,16 +248,25 @@ export default (state = initialState, action) => {
 
       return {
         ...state,
-        ufos: state.ufos.map((ufo) => {
-          if (!ufo.active) return ufo
-          return {
-            ...ufo,
-            coordinates: [
-              Math.max(ufo.coordinates[0] + horizontalIncrementAmount, 0),
-              Math.max(ufo.coordinates[1] + verticalIncrementAmount, 0)
-            ]
-          }
-        })
+        ufos: (
+          state.ufos
+            .filter((ufo) => !shipCollisions.ufo.includes(ufo.id))
+            .map((ufo) => {
+              if (!ufo.active) return ufo
+              return {
+                ...ufo,
+                coordinates: [
+                  Math.max(ufo.coordinates[0] + horizontalIncrementAmount, 0),
+                  Math.max(ufo.coordinates[1] + verticalIncrementAmount, 0)
+                ]
+              }
+            })
+        ),
+        numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0),
+        shipCoordinates: shipCollisions.shipDidCollide
+          ? [window.innerWidth/2, window.innerHeight/2]
+          : state.shipCoordinates,
+
       }
 
     default: return state

@@ -2,17 +2,19 @@ import createAsteroidsFromCollision from './createAsteroidsFromCollision'
 import { ASTEROID_SIZE_INDEX } from '../Config'
 
 
-function detectCollisions(collectionA, collectionB, onDetect) {
+function detectCollisions(collectionA, collectionB, onDetect, size) {
   const itemACollisions = []
   const itemBCollisions = []
 
   collectionA.forEach((itemA) => {
     collectionB.forEach((itemB) => {
+      size = size || ASTEROID_SIZE_INDEX[itemB.size]
+
       if (
         itemA.coordinates[0] >= itemB.coordinates[0] &&
-        itemA.coordinates[0] <= itemB.coordinates[0]+ASTEROID_SIZE_INDEX[itemB.size] &&
+        itemA.coordinates[0] <= itemB.coordinates[0]+ size &&
         itemA.coordinates[1] >= itemB.coordinates[1] &&
-        itemA.coordinates[1] <= itemB.coordinates[1]+ASTEROID_SIZE_INDEX[itemB.size]
+        itemA.coordinates[1] <= itemB.coordinates[1]+ size
       ) {
         if (typeof onDetect === "function") {
           onDetect(itemA, itemB)
@@ -33,6 +35,19 @@ function calculatePointsFromCollision(size) {
     return 20
   } else if (size === "small") {
     return 10
+  }
+}
+
+export function detectMissileCollisionsWithUFOs(missiles, ufos) {
+  let points = 0
+  const collisions = detectCollisions(missiles, ufos, (missile, ufo) => {
+    points = points + 50
+  }, 50)
+
+  return {
+    ufo: collisions.collectionB,
+    missile: collisions.collectionA,
+    points,
   }
 }
 
@@ -66,5 +81,14 @@ export function detectShipCollisions(shipCoordinates, asteroids) {
     shipDidCollide: !!collisions.collectionA.length,
     asteroid: collisions.collectionB,
     newAsteroids,
+  }
+}
+
+export function detectShipCollisionsWithUFO(shipCoordinates, ufos) {
+  const collisions = detectCollisions([{ id: "ship", coordinates: shipCoordinates }], ufos, null, 50)
+
+  return {
+    shipDidCollide: !!collisions.collectionA.length,
+    ufo: collisions.collectionB,
   }
 }
