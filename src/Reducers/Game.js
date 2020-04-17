@@ -5,6 +5,7 @@ import {
   detectMissileCollisionsWithUFOs,
   detectShipCollisionsWithUFO
 } from '../Utils/detectCollisions'
+import { getNewUFOState } from '../Utils/UFOCoordinates'
 import { ASTEROID_SIZE_INDEX } from '../Config'
 
 let MISSILE_COUNTER = 0
@@ -12,7 +13,6 @@ let UFO_MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
 const SHIP_SIZE = 30
 const MISSILE_SIZE = 5
-const UFO_MOVEMENT = 20
 
 function newGame () {
   return {
@@ -229,27 +229,7 @@ export default (state = initialState, action) => {
 
     case "UFO_EVENT_LOOP":
       shipCollisions = detectShipCollisionsWithUFO(state.shipCoordinates, state.ufos)
-      function randomNumberIsOne(max = 2) {
-        return Math.floor(Math.random() * max) === 1
-      }
-      const verticalDirection = randomNumberIsOne() ?
-        "up" :
-        "down"
-
-      const horizontalDirection = randomNumberIsOne(6) ?
-        "left" :
-        "right"
-
-      const fireMissile = randomNumberIsOne(6)
-
-      const horizontalIncrementAmount = horizontalDirection === "right" ?
-        UFO_MOVEMENT :
-        UFO_MOVEMENT * -1
-
-      const verticalIncrementAmount = verticalDirection === "down" ?
-        UFO_MOVEMENT :
-        UFO_MOVEMENT * -1
-
+      const moveUFO = getNewUFOState()
       const newUfoMissiles = state.ufoMissiles.map((ufoMissile) => {
         return {
           ...ufoMissile,
@@ -260,7 +240,7 @@ export default (state = initialState, action) => {
         }
       })
 
-      if (fireMissile) {
+      if (moveUFO.fireMissile) {
         newUfoMissiles.push({
           id: UFO_MISSILE_COUNTER++,
           coordinates: state.ufos[0].coordinates,
@@ -278,8 +258,8 @@ export default (state = initialState, action) => {
               return {
                 ...ufo,
                 coordinates: [
-                  Math.max(ufo.coordinates[0] + horizontalIncrementAmount, 0),
-                  Math.max(ufo.coordinates[1] + verticalIncrementAmount, 0)
+                  Math.max(ufo.coordinates[0] + moveUFO.horizontalIncrementAmount, 0),
+                  Math.max(ufo.coordinates[1] + moveUFO.verticalIncrementAmount, 0)
                 ]
               }
             })
