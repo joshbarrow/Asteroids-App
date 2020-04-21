@@ -5,6 +5,7 @@ import Ship from './Ship'
 import Missile from './Missile'
 import Asteroid from './Asteroid'
 import LivesCounter from './LivesCounter'
+import NextLevel from './NextLevel'
 import GameOver from './GameOver'
 import Score from './ScoreCounter'
 import UFO from './UFO'
@@ -77,6 +78,10 @@ const Game = ({
 
   if (numberOfLives === 0) {
     return <GameOver />
+  }
+
+  if (asteroids.length === 0 && ufos.length === 0) {
+    return <NextLevel />
   }
 
   return(

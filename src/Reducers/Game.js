@@ -3,7 +3,8 @@ import {
   detectShipCollisions,
   detectMissileCollisions,
   detectMissileCollisionsWithUFOs,
-  detectShipCollisionsWithUFO
+  detectShipCollisionsWithUFO,
+  detectUFOMissileCollisionsWithShip
 } from '../Utils/detectCollisions'
 import { getNewUFOState } from '../Utils/UFOCoordinates'
 import { ASTEROID_SIZE_INDEX } from '../Config'
@@ -24,6 +25,30 @@ function newGame () {
         active: false,
         startTime: 5000,
       },
+
+      {
+        id: 2,
+        coordinates: [0,0],
+        rotation: 180,
+        active: false,
+        startTime: 10000,
+      },
+
+      {
+        id: 3,
+        coordinates: [0,0],
+        rotation: 180,
+        active: false,
+        startTime: 15000,
+      },
+
+      {
+        id: 4,
+        coordinates: [0,0],
+        rotation: 180,
+        active: false,
+        startTime: 20000,
+      },
     ],
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
@@ -40,47 +65,47 @@ function newGame () {
         rotation: 95,
       },
 
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [0, window.innerHeight / 2],
-        rotation: 50,
-      },
-
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [0, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-        rotation: 50,
-      },
-
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [window.innerWidth / 2, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-        rotation: 50,
-      },
-
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-        rotation: 11,
-      },
-
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight / 2],
-        rotation: 12,
-      },
-
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, 0],
-        rotation: 122,
-      },
+      // {
+      //   id: ASTEROID_COUNTER++,
+      //   size: "large",
+      //   coordinates: [0, window.innerHeight / 2],
+      //   rotation: 50,
+      // },
+      //
+      // {
+      //   id: ASTEROID_COUNTER++,
+      //   size: "large",
+      //   coordinates: [0, window.innerHeight - ASTEROID_SIZE_INDEX.large],
+      //   rotation: 50,
+      // },
+      //
+      // {
+      //   id: ASTEROID_COUNTER++,
+      //   size: "large",
+      //   coordinates: [window.innerWidth / 2, window.innerHeight - ASTEROID_SIZE_INDEX.large],
+      //   rotation: 50,
+      // },
+      //
+      // {
+      //   id: ASTEROID_COUNTER++,
+      //   size: "large",
+      //   coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight - ASTEROID_SIZE_INDEX.large],
+      //   rotation: 11,
+      // },
+      //
+      // {
+      //   id: ASTEROID_COUNTER++,
+      //   size: "large",
+      //   coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight / 2],
+      //   rotation: 12,
+      // },
+      //
+      // {
+      //   id: ASTEROID_COUNTER++,
+      //   size: "large",
+      //   coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, 0],
+      //   rotation: 122,
+      // },
     ],
   }
 }
@@ -91,19 +116,24 @@ export default (state = initialState, action) => {
   let missileCollisions,
     shipCollisions,
     ufoCollisions,
-    shipUFOCollisions
+    shipUFOCollisions,
+    ufoMissileCollisionsWithShip
 
   switch (action.type) {
     case "ARROW_UP":
       shipCollisions = detectShipCollisions(state.shipCoordinates, state.asteroids)
+      ufoMissileCollisionsWithShip =  detectUFOMissileCollisionsWithShip(state.ufoMissiles, state.shipCoordinates)
       shipUFOCollisions = detectShipCollisionsWithUFO(state.shipCoordinates, state.ufos)
-      if (shipCollisions.shipDidCollide || shipUFOCollisions.shipDidCollide){
+      if (shipCollisions.shipDidCollide || shipUFOCollisions.shipDidCollide || ufoMissileCollisionsWithShip.shipDidCollide) {
         return {
           ...state,
           shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
           asteroids: [
             ...state.asteroids.filter(asteroid => !shipCollisions.asteroid.includes(asteroid.id)),
             ...shipCollisions.newAsteroids,
+          ],
+          ufoMissiles: [
+            ...state.ufoMissiles.filter((ufoMissile) => !ufoMissileCollisionsWithShip.missile.includes(ufoMissile.id))
           ],
           numberOfLives: Math.max(
             shipCollisions.shipDidCollide || shipUFOCollisions.shipDidCollide ?
@@ -229,43 +259,50 @@ export default (state = initialState, action) => {
 
     case "UFO_EVENT_LOOP":
       shipCollisions = detectShipCollisionsWithUFO(state.shipCoordinates, state.ufos)
-      const moveUFO = getNewUFOState()
-      const newUfoMissiles = state.ufoMissiles.map((ufoMissile) => {
-        return {
-          ...ufoMissile,
-          coordinates: [
-            ufoMissile.coordinates[0],
-            ufoMissile.coordinates[1] + 20
-          ]
-        }
-      })
-
-      if (moveUFO.fireMissile) {
-        newUfoMissiles.push({
-          id: UFO_MISSILE_COUNTER++,
-          coordinates: state.ufos[0].coordinates,
-          rotation: state.ufos[0].rotation
+      ufoMissileCollisionsWithShip = detectUFOMissileCollisionsWithShip(state.ufoMissiles, state.shipCoordinates)
+      const newUfoMissiles = state.ufoMissiles
+        .filter((ufoMissile) => !ufoMissileCollisionsWithShip.missile.includes(ufoMissile.id))
+        .map((ufoMissile) => {
+          return {
+            ...ufoMissile,
+            coordinates: [
+              ufoMissile.coordinates[0],
+              ufoMissile.coordinates[1] + 20
+            ]
+          }
         })
-      }
+
+      const newUFOs = (
+        state.ufos
+          .filter((ufo) => !shipCollisions.ufo.includes(ufo.id))
+          .map((ufo) => {
+            if (!ufo.active) return ufo
+
+            const moveUFO = getNewUFOState()
+
+            if (moveUFO.fireMissile) {
+              newUfoMissiles.push({
+                id: UFO_MISSILE_COUNTER++,
+                coordinates: ufo.coordinates,
+                rotation: ufo.rotation,
+              })
+            }
+
+            return {
+              ...ufo,
+              coordinates: [
+                Math.max(ufo.coordinates[0] + moveUFO.horizontalIncrementAmount, 0),
+                Math.max(ufo.coordinates[1] + moveUFO.verticalIncrementAmount, 0)
+              ]
+            }
+          })
+      )
 
       return {
         ...state,
-        ufos: (
-          state.ufos
-            .filter((ufo) => !shipCollisions.ufo.includes(ufo.id))
-            .map((ufo) => {
-              if (!ufo.active) return ufo
-              return {
-                ...ufo,
-                coordinates: [
-                  Math.max(ufo.coordinates[0] + moveUFO.horizontalIncrementAmount, 0),
-                  Math.max(ufo.coordinates[1] + moveUFO.verticalIncrementAmount, 0)
-                ]
-              }
-            })
-        ),
+        ufos: newUFOs,
         numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0),
-        shipCoordinates: shipCollisions.shipDidCollide
+        shipCoordinates: shipCollisions.shipDidCollide || ufoMissileCollisionsWithShip.shipDidCollide
           ? [window.innerWidth/2, window.innerHeight/2]
           : state.shipCoordinates,
         ufoMissiles: newUfoMissiles
