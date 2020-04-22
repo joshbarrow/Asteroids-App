@@ -14,42 +14,167 @@ let UFO_MISSILE_COUNTER = 0
 let ASTEROID_COUNTER = 0
 const SHIP_SIZE = 30
 const MISSILE_SIZE = 5
+let UFO_COUNTER = 0
 
-function newGame () {
+const asteroidsByLevel = {
+  level1: [
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [32,66],
+      rotation: 10,
+    },
+  ],
+  level2: [
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [12,55],
+      rotation: 10,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [212,55],
+      rotation: 30,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [110,44],
+      rotation: 30,
+    },
+  ],
+  level3: [
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+  ],
+  level4: [
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+  ],
+  level5: [
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0,0],
+      rotation: 95,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0, window.innerHeight / 2],
+      rotation: 50,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [0, window.innerHeight - ASTEROID_SIZE_INDEX.large],
+      rotation: 50,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [window.innerWidth / 2, window.innerHeight - ASTEROID_SIZE_INDEX.large],
+      rotation: 50,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight - ASTEROID_SIZE_INDEX.large],
+      rotation: 11,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight / 2],
+      rotation: 12,
+    },
+
+    {
+      id: ASTEROID_COUNTER++,
+      size: "large",
+      coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, 0],
+      rotation: 122,
+    },
+  ],
+}
+
+const ufosByLevel = {
+  level1: [
+  ],
+  level2: [
+    {
+      id: UFO_COUNTER++,
+      coordinates: [0,0],
+      rotation: 180,
+      active: false,
+      startTime: 10000,
+    },
+  ],
+}
+
+function newGame (level = 1) {
   return {
-    ufos: [
-      {
-        id: 1,
-        coordinates: [0,0],
-        rotation: 180,
-        active: false,
-        startTime: 5000,
-      },
-
-      {
-        id: 2,
-        coordinates: [0,0],
-        rotation: 180,
-        active: false,
-        startTime: 10000,
-      },
-
-      {
-        id: 3,
-        coordinates: [0,0],
-        rotation: 180,
-        active: false,
-        startTime: 15000,
-      },
-
-      {
-        id: 4,
-        coordinates: [0,0],
-        rotation: 180,
-        active: false,
-        startTime: 20000,
-      },
-    ],
+    level,
+    ufos: ufosByLevel["level"+level],
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
     numberOfLives: 2,
@@ -57,56 +182,7 @@ function newGame () {
     score: 0,
     missiles: [],
     ufoMissiles: [],
-    asteroids: [
-      {
-        id: ASTEROID_COUNTER++,
-        size: "large",
-        coordinates: [0,0],
-        rotation: 95,
-      },
-
-      // {
-      //   id: ASTEROID_COUNTER++,
-      //   size: "large",
-      //   coordinates: [0, window.innerHeight / 2],
-      //   rotation: 50,
-      // },
-      //
-      // {
-      //   id: ASTEROID_COUNTER++,
-      //   size: "large",
-      //   coordinates: [0, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-      //   rotation: 50,
-      // },
-      //
-      // {
-      //   id: ASTEROID_COUNTER++,
-      //   size: "large",
-      //   coordinates: [window.innerWidth / 2, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-      //   rotation: 50,
-      // },
-      //
-      // {
-      //   id: ASTEROID_COUNTER++,
-      //   size: "large",
-      //   coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-      //   rotation: 11,
-      // },
-      //
-      // {
-      //   id: ASTEROID_COUNTER++,
-      //   size: "large",
-      //   coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight / 2],
-      //   rotation: 12,
-      // },
-      //
-      // {
-      //   id: ASTEROID_COUNTER++,
-      //   size: "large",
-      //   coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, 0],
-      //   rotation: 122,
-      // },
-    ],
+    asteroids: asteroidsByLevel["level"+level]
   }
 }
 
@@ -243,7 +319,13 @@ export default (state = initialState, action) => {
         }
 
     case "NEW_GAME":
-      return newGame()
+      return newGame(state.level)
+
+    case "NEXT_LEVEL":
+      return newGame(state.level+1) {
+        ...state,
+        score:
+      }
 
     case "UPDATE_CURRENT_TIME":
       return {

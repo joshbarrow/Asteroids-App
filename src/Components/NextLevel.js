@@ -8,7 +8,7 @@ const NextLevel = () => {
       <button
         onClick={ () => {
           dispatch({
-            type: "NEW_GAME",
+            type: "NEXT_LEVEL",
             payload: null,
           })
         }}

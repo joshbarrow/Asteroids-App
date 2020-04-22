@@ -10,6 +10,7 @@ import GameOver from './GameOver'
 import Score from './ScoreCounter'
 import UFO from './UFO'
 import UFOMissile from './UFOMissile'
+import LevelCounter from './LevelCounter'
 
 const mapStateToProps = state => ({
   asteroids: state.game.asteroids,
@@ -19,6 +20,7 @@ const mapStateToProps = state => ({
   score: state.game.score,
   time: state.game.time,
   ufos: state.game.ufos,
+  level: state.game.level,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -31,6 +33,7 @@ const Game = ({
   asteroidEventLoop,
   asteroids,
   keyUp,
+  level,
   missileEventLoop,
   missiles,
   numberOfLives,
@@ -88,6 +91,7 @@ const Game = ({
     <div id="game">
       <Score score={ score }/>
       <LivesCounter lives={ numberOfLives } />
+      <LevelCounter level={ level } />
       <Ship />
       { ufos.map((ufo, index) => ufo.active ? <UFO ufo={ ufo } key={ index } /> : null) }
       { missiles.map((missile, index) => <Missile missile={ missile } key={ index } />) }
