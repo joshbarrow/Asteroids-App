@@ -7,182 +7,25 @@ import {
   detectUFOMissileCollisionsWithShip
 } from '../Utils/detectCollisions'
 import { getNewUFOState } from '../Utils/UFOCoordinates'
-import { ASTEROID_SIZE_INDEX } from '../Config'
+import { ASTEROID_SIZE_INDEX, asteroidsByLevel, ufosByLevel } from '../Config'
 
 let MISSILE_COUNTER = 0
 let UFO_MISSILE_COUNTER = 0
-let ASTEROID_COUNTER = 0
 const SHIP_SIZE = 30
 const MISSILE_SIZE = 5
-let UFO_COUNTER = 0
 
-const asteroidsByLevel = {
-  level1: [
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [32,66],
-      rotation: 10,
-    },
-  ],
-  level2: [
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [12,55],
-      rotation: 10,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [212,55],
-      rotation: 30,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [110,44],
-      rotation: 30,
-    },
-  ],
-  level3: [
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-  ],
-  level4: [
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-  ],
-  level5: [
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0,0],
-      rotation: 95,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0, window.innerHeight / 2],
-      rotation: 50,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [0, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-      rotation: 50,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [window.innerWidth / 2, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-      rotation: 50,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight - ASTEROID_SIZE_INDEX.large],
-      rotation: 11,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, window.innerHeight / 2],
-      rotation: 12,
-    },
-
-    {
-      id: ASTEROID_COUNTER++,
-      size: "large",
-      coordinates: [window.innerWidth - ASTEROID_SIZE_INDEX.large, 0],
-      rotation: 122,
-    },
-  ],
-}
-
-const ufosByLevel = {
-  level1: [
-  ],
-  level2: [
-    {
-      id: UFO_COUNTER++,
-      coordinates: [0,0],
-      rotation: 180,
-      active: false,
-      startTime: 10000,
-    },
-  ],
-}
-
-function newGame (level = 1) {
+function newGame (level = 1, score = 0, numberOfLives = 2) {
   return {
     level,
-    ufos: ufosByLevel["level"+level],
+    ufos: ufosByLevel(level),
     shipCoordinates: [window.innerWidth/2, window.innerHeight/2],
     shipRotation: 0,
-    numberOfLives: 2,
+    numberOfLives,
     time: 0,
-    score: 0,
+    score,
     missiles: [],
     ufoMissiles: [],
-    asteroids: asteroidsByLevel["level"+level]
+    asteroids: asteroidsByLevel(level)
   }
 }
 
@@ -315,17 +158,13 @@ export default (state = initialState, action) => {
           missiles: state.missiles.filter((missile) => !missileCollisions.missile.includes(missile.id)),
           numberOfLives: Math.max(shipCollisions.shipDidCollide ? state.numberOfLives-1 : state.numberOfLives, 0),
           score: missileCollisions.missileDidCollide ? state.score+10 : state.score,
-
         }
 
     case "NEW_GAME":
       return newGame(state.level)
 
     case "NEXT_LEVEL":
-      return newGame(state.level+1) {
-        ...state,
-        score:
-      }
+      return newGame(state.level+1, state.score, state.numberOfLives)
 
     case "UPDATE_CURRENT_TIME":
       return {

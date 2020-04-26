@@ -23,10 +23,6 @@ const mapStateToProps = state => ({
   level: state.game.level,
 })
 
-const mapDispatchToProps = dispatch => ({
-
-})
-
 let gameLoopInterval
 
 const Game = ({
@@ -101,4 +97,4 @@ const Game = ({
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Game)
+export default connect(mapStateToProps, null)(Game)

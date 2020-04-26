@@ -71,7 +71,6 @@ export function detectMissileCollisions(missiles, asteroids) {
 
 export function detectUFOMissileCollisionsWithShip(ufoMissiles, shipCoordinates) {
   const collisions = detectCollisions([{ id: "ship", coordinates: shipCoordinates }], ufoMissiles, null, 20 )
-  console.log(!!collisions.collectionB.length);
   return {
     shipDidCollide: !!collisions.collectionB.length,
     missile: collisions.collectionA,
