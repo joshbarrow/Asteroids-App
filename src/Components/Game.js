@@ -11,6 +11,7 @@ import Score from './ScoreCounter'
 import UFO from './UFO'
 import UFOMissile from './UFOMissile'
 import LevelCounter from './LevelCounter'
+import MainMenu from './MainMenu'
 
 const mapStateToProps = state => ({
   asteroids: state.game.asteroids,
@@ -36,7 +37,8 @@ const Game = ({
   score,
   time,
   ufos,
-  ufoMissiles
+  ufoMissiles,
+  mainMenu
 }) => {
   const dispatch = useDispatch()
   useEffect(() => {

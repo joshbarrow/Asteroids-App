@@ -11,8 +11,9 @@ export const asteroidsByLevel = (level = 1) => {
   let counter = 0
   const asteroids = []
   while (counter < level) {
-    const randomXCoordinates = Math.floor(Math.random() * window.innerWidth/4 + 1)
-    const randomYCoordinates = Math.floor(Math.random() * window.innerHeight + 1)
+    let coordinatesUsed = true
+    let randomXCoordinates = Math.floor(Math.random() * window.innerWidth/4 + 1)
+    let randomYCoordinates = Math.floor(Math.random() * window.innerHeight + 1)
     const randomRotation = Math.floor(Math.random() * 360 + 1)
     counter++
     asteroids.push({
