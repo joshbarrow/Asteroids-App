@@ -100,3 +100,9 @@ export function detectShipCollisionsWithUFO(shipCoordinates, ufos) {
     ufo: collisions.collectionB,
   }
 }
+
+export function haveAsteroidCoordinatesBeenTaken(newAsteroidCoordinates, asteroids) {
+  const collisions = detectCollisions([{ id: "newAsteroid", coordinates: newAsteroidCoordinates }], asteroids, null, 50 )
+
+  return !!collisions.collectionA.length
+}

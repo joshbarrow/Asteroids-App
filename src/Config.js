@@ -1,3 +1,5 @@
+import { haveAsteroidCoordinatesBeenTaken } from './Utils/detectCollisions'
+
 let ASTEROID_COUNTER = 0
 let UFO_COUNTER = 0
 
@@ -10,10 +12,14 @@ export const ASTEROID_SIZE_INDEX = {
 export const asteroidsByLevel = (level = 1) => {
   let counter = 0
   const asteroids = []
-  while (counter < level) {
+  while (counter < level * 5) {
     let coordinatesUsed = true
-    let randomXCoordinates = Math.floor(Math.random() * window.innerWidth/4 + 1)
-    let randomYCoordinates = Math.floor(Math.random() * window.innerHeight + 1)
+    let randomXCoordinates, randomYCoordinates
+    while (coordinatesUsed) {
+       randomYCoordinates = Math.floor(Math.random() * window.innerHeight + 1)
+       randomXCoordinates = Math.floor(Math.random() * window.innerWidth/4 + 1)
+       coordinatesUsed = haveAsteroidCoordinatesBeenTaken([randomXCoordinates, randomYCoordinates], asteroids)
+    }
     const randomRotation = Math.floor(Math.random() * 360 + 1)
     counter++
     asteroids.push({
