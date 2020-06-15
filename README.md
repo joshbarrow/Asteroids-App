@@ -2,31 +2,28 @@
 
 - [Introduction](#introduction)
 
-  - [Components](#components)
+- [Components](#components)
+  - [Game](#game)
+  - [Asteroid](#asteroid)
+  - [Game Over](#game-over)
+  - [Level Counter](#level-counter)
+  - [Lives Counter](#lives-counter)
+  - [Main Menu](#main-menu)
+  - [Ship Missile](#ship-missile)
+  - [Next Level](#next-level)
+  - [Score Counter](#score-counter)
+  - [Ship](#ship)
+  - [UFO](#ufo)
+  - [UFO Missile](#ufo-missile)
 
-    - [Game](#game)
-    - [Asteroid](#asteroid)
-    - [Game Over](#game-over)
-    - [Level Counter](#level-counter)
-    - [Lives Counter](#lives-counter)
-    - [Main Menu](#main-menu)
-    - [Ship Missile](#ship-missile)
-    - [Next Level](#next-level)
-    - [Score Counter](#score-counter)
-    - [Ship](#ship)
-    - [UFO](#ufo)
-    - [UFO Missile](#ufo-missile)
-
-  - [Game Reducers](#game-reducers)
-  - [Sagas Key Bindings](#sagas-key-bindings)
-  - [Utils](#utils)
-
-    - [Collision Detection](#collision-detection)
-    - [Asteroid Collision Detection](#asteroid-collision-detection)
-    - [Ship Coordinates](#ship-coordinates)
-    - [Randomized UFO Coordinates](#randomized-ufo-coordinates)
-
-  - [Config](#config)
+- [Game Reducers](#game-reducers)
+- [Sagas Key Bindings](#sagas-key-bindings)
+- [Utils](#utils)
+  - [Collision Detection](#collision-detection)
+  - [Asteroid Collision Detection](#asteroid-collision-detection)
+  - [Ship Coordinates](#ship-coordinates)
+  - [Randomized UFO Coordinates](#randomized-ufo-coordinates)
+- [Config](#config)
 
 # Introduction
 
