@@ -1,7 +1,6 @@
 # Table of Contents
 
 - [Introduction](#introduction)
-
 - [Components](#components)
   - [Game](#game)
   - [Asteroid](#asteroid)
@@ -15,7 +14,6 @@
   - [Ship](#ship)
   - [UFO](#ufo)
   - [UFO Missile](#ufo-missile)
-
 - [Game Reducers](#game-reducers)
 - [Sagas Key Bindings](#sagas-key-bindings)
 - [Utils](#utils)
